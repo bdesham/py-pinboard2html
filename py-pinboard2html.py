@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# pinboard2bookmarks
+# py-pinboard2html
 # 
 # Convert your Pinboard bookmarks into an HTML bookmarks file
 #
@@ -23,15 +23,15 @@ password = "hunter2"
 
 # print version and help information
 
-script_version = "1.0"
+script_version = "1.1"
 
 def version_text():
 	old_out = sys.stdout
 	sys.stdout = sys.stderr
 
-	print "pinboard2bookmarks", script_version
+	print "py-pinboard2html", script_version
 	print "(c) 2011, Benjamin Esham"
-	print "https://github.com/bdesham/pinboard2bookmarks"
+	print "https://github.com/bdesham/py-pinboard2html"
 
 	sys.stdout = old_out
 
@@ -42,7 +42,7 @@ def help_text():
 	sys.stdout = sys.stderr
 
 	print
-	print "usage: python pinboard2bookmarks.py [-u username -p password] [output-file]"
+	print "usage: python py-pinboard2html.py [-u username -p password] [output-file]"
 
 	sys.stdout = old_out
 
@@ -130,7 +130,7 @@ if len(args):
 	try:
 		out = open(os.path.expanduser(args[0]), 'w')
 	except IOError, e:
-		print >> sys.stderr, "pinboard2bookmarks: error opening the output file."
+		print >> sys.stderr, "py-pinboard2html: error opening the output file."
 		print >> sys.stderr, e
 		sys.exit(1)
 	output_to_file = True
@@ -148,7 +148,7 @@ data = pipe.communicate()[0]
 try:
 	bookmarks = json.loads(data)
 except ValueError, e:
-	print >> sys.stderr, "pinboard2bookmarks: error parsing JSON. " + \
+	print >> sys.stderr, "py-pinboard2html: error parsing JSON. " + \
 			"Did you enter the right password?"
 	print >> sys.stderr, e
 	sys.exit(1)
