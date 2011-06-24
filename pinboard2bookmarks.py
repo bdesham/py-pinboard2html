@@ -128,8 +128,8 @@ elif "-u" in args or "-p" in args:
 
 if len(args):
 	try:
-		out = open(args[0], 'w')
-	except IOError, r:
+		out = open(os.path.expanduser(args[0]), 'w')
+	except IOError, e:
 		print >> sys.stderr, "pinboard2bookmarks: error opening the output file."
 		print >> sys.stderr, e
 		sys.exit(1)
