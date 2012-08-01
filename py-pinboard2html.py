@@ -4,7 +4,7 @@
 # 
 # Convert your Pinboard bookmarks into an HTML bookmarks file
 #
-# (c) Benjamin Esham, 2011.  See the accompanying README.md for this file's
+# (c) Benjamin Esham, 2011-12.  See the accompanying README.md for this file's
 # license and other information.
 
 import json, os, sys, subprocess
@@ -23,14 +23,14 @@ password = "hunter2"
 
 # print version and help information
 
-script_version = "1.1"
+script_version = "1.2"
 
 def version_text():
 	old_out = sys.stdout
 	sys.stdout = sys.stderr
 
 	print "py-pinboard2html", script_version
-	print "(c) 2011, Benjamin Esham"
+	print "(c) 2011-12, Benjamin Esham"
 	print "https://github.com/bdesham/py-pinboard2html"
 
 	sys.stdout = old_out
@@ -126,6 +126,27 @@ elif "-u" in args or "-p" in args:
 	help_text()
 	sys.exit(2)
 
+# get the data from pinboard
+
+pipe = subprocess.Popen(["curl", "-s", "-u", "%s:%s" % (username, password), \
+		"https://api.pinboard.in/v1/posts/all?format=json"], \
+		stdout = subprocess.PIPE)
+data = pipe.communicate()[0]
+
+if len(data) == 0:
+	print >> sys.stderr, "py-pinboard2html: Pinboard response was empty."
+	sys.exit(1)
+
+try:
+	bookmarks = json.loads(data)
+except ValueError, e:
+	print >> sys.stderr, "py-pinboard2html: error parsing JSON. " + \
+			"Did you enter the right password?"
+	print >> sys.stderr, e
+	sys.exit(1)
+
+# write out the html file
+
 if len(args):
 	try:
 		out = open(os.path.expanduser(args[0]), 'w')
@@ -137,23 +158,6 @@ if len(args):
 else:
 	out = sys.stdout
 	output_to_file = False
-
-# get the data from pinboard
-
-pipe = subprocess.Popen(["curl", "-s", "-u", "%s:%s" % (username, password), \
-		"https://api.pinboard.in/v1/posts/all?format=json"], \
-		stdout = subprocess.PIPE)
-data = pipe.communicate()[0]
-
-try:
-	bookmarks = json.loads(data)
-except ValueError, e:
-	print >> sys.stderr, "py-pinboard2html: error parsing JSON. " + \
-			"Did you enter the right password?"
-	print >> sys.stderr, e
-	sys.exit(1)
-
-# write out the html file
 
 print >> out, '<html xmlns:NC="http://home.netscape.com/NC-rdf#">'
 print >> out, '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>'
