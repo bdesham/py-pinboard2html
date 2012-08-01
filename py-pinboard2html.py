@@ -10,11 +10,14 @@
 import json, os, sys, subprocess
 
 #
-# Replace the following two strings with your login credentials:
+# Replace the following two strings with your login credentials.
+# You can find your API token at <http://pinboard.in/settings/password>.
+# It is displayed there like "username:2AB96390C7DBE34"; enter those two
+# pieces separately here.
 #
 
 username = "username"
-password = "hunter2"
+token = "2AB96390C7DBE34"
 
 #
 # OK! Leave the rest of the script alone ;-)
@@ -23,7 +26,7 @@ password = "hunter2"
 
 # print version and help information
 
-script_version = "1.2"
+script_version = "1.3"
 
 def version_text():
 	old_out = sys.stdout
@@ -42,7 +45,7 @@ def help_text():
 	sys.stdout = sys.stderr
 
 	print
-	print "usage: python py-pinboard2html.py [-u username -p password] [output-file]"
+	print "usage: python py-pinboard2html.py [-u username -t token] [output-file]"
 
 	sys.stdout = old_out
 
@@ -94,7 +97,7 @@ if len(args) not in [0, 1, 4, 5] or "-h" in args or "--help" in args:
 	help_text()
 	sys.exit(2)
 
-if "-u" in args and "-p" in args:
+if "-u" in args and "-t" in args:
 	ind = args.index("-u")
 
 	try:
@@ -107,30 +110,29 @@ if "-u" in args and "-p" in args:
 	args.pop(ind)
 	
 	try:
-		# wrap this in a try block in case we got something like "-u -p"
-		ind = args.index("-p")
+		# wrap this in a try block in case we got something like "-u -t"
+		ind = args.index("-t")
 	except ValueError, e:
 		help_text()
 		sys.exit(2)
 
 	try:
-		password = args[ind+1]
+		token = args[ind+1]
 	except IndexError, e:
 		help_text()
 		sys.exit(2)
 	
 	args.pop(ind)
 	args.pop(ind)
-elif "-u" in args or "-p" in args:
-	# user gave a username but not a password, or vice versa
+elif "-u" in args or "-t" in args:
+	# user gave a username but not a token, or vice versa
 	help_text()
 	sys.exit(2)
 
 # get the data from pinboard
 
-pipe = subprocess.Popen(["curl", "-s", "-u", "%s:%s" % (username, password), \
-		"https://api.pinboard.in/v1/posts/all?format=json"], \
-		stdout = subprocess.PIPE)
+url = "https://api.pinboard.in/v1/posts/all?format=json&auth_token=%s:%s" % (username, token)
+pipe = subprocess.Popen(["curl", "-s", url], stdout = subprocess.PIPE)
 data = pipe.communicate()[0]
 
 if len(data) == 0:
@@ -141,7 +143,7 @@ try:
 	bookmarks = json.loads(data)
 except ValueError, e:
 	print >> sys.stderr, "py-pinboard2html: error parsing JSON. " + \
-			"Did you enter the right password?"
+			"Did you enter the right API token?"
 	print >> sys.stderr, e
 	sys.exit(1)
 
