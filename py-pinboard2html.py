@@ -1,11 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # py-pinboard2html
 # 
 # Convert your Pinboard bookmarks into an HTML bookmarks file
 #
-# (c) Benjamin Esham, 2011-12.  See the accompanying README.md for this file's
-# license and other information.
+# Copyright (c) 2011-2012 Benjamin D. Esham. This program is released under the
+# ISC license, which you can find in the file LICENSE.md.
 
 import json, os, sys, subprocess
 
