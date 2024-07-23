@@ -1,25 +1,29 @@
 # py-pinboard2html
 
-This is a simple Python script to convert your [Pinboard](http://pinboard.in) bookmarks into the [standard HTML-ish bookmarks file format](http://msdn.microsoft.com/en-us/library/aa753582%28v=vs.85%29.aspx).
+This is a simple Python script to download your [Pinboard](https://pinboard.in) bookmarks and write them in the [standard HTML-ish bookmarks file format](https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa753582%28v=vs.85%29).
 
 ## Usage
 
-The script needs to know your Pinboard username and the associated API token. You can give it this information either by editing the Python script or by passing options to the script. In the former case, open `py-pinboard2html.py` in your favorite text editor and replace the values on lines 19 and 20 with your username and token.  You can then do
+This script requires Python 3.7 or later.
 
-    python py-pinboard2html.py [output-file]
+The script can be invoked like
 
-Output will go to stdout if you do not specify an output file name.
+    python3 py-pinboard2html.py -u USERNAME -t TOKEN OUTPUT_FILE
 
-If you want to pass your username and password as command-line options, run the script like
+Here `USERNAME` is your Pinboard username, `TOKEN` is your Pinboard API token (shown in [the “password” section of your Pinboard preferences][password]), and `OUTPUT_FILE` is the filename where the bookmarks should be saved. Specifying `-` as the `OUTPUT_FILE` will print the HTML to the standard output.
 
-    python py-pinboard2html.py -u username -t token [output-file]
-
-If you take this approach you must specify *both* a username and a token on the command line. The `-u` and `-t` flags override the username and password set in the script file. Again, output will go to stdout if you do not specify an output file name.
+[password]: https://pinboard.in/settings/password
 
 ## Version history
 
+* 2.0 (2024-07-22)
+    - The script has been completely rewritten. It now requires Python 3.7 or later.
+    - Hard-coding the username and password in the script file is no longer supported. The `-u` and `-t` command-line arguments are now mandatory.
+    - The `OUTPUT_FILE` command-line argument is now mandatory. If you want to send the output to the standard output, you must now supply a value of `-` for `OUTPUT_FILE` instead of omitting the argument.
+    - Non-ASCII characters are no longer HTML-escaped in the output. (HTML special characters are, of course, still escaped.)
+    - The script no longer expands `~` in the `OUTPUT_FILE` argument into a reference to the home directory. This was always a misfeature; this kind of expansion is done by the shell and generally should not be done by other programs.
 * 1.2 (2012-08-01)
-	- This version no longer stores or accepts passwords, but rather uses the API tokens described in [this blog post](http://blog.pinboard.in/2012/07/api_authentication_tokens/). To use this version, obtain your token (something like "username:2AB96390C7DBE34") from [your Pinboard settings](http://pinboard.in/settings/password). The part after the colon is your API token, which can be set on line 20 of the script or passed in with the `-t` argument.
+	- This version no longer stores or accepts passwords, but rather uses the API tokens described in [this blog post](https://blog.pinboard.in/2012/07/api_authentication_tokens/). To use this version, obtain your token (something like "username:2AB96390C7DBE34") from [your Pinboard settings](https://pinboard.in/settings/password). The part after the colon is your API token, which can be set on line 20 of the script or passed in with the `-t` argument.
     - Don't overwrite an existing bookmarks file if we get a bad response from the server.
 * 1.1 (2011-06-24): Changed my mind and renamed the project from pinboard2bookmarks to py-pinboard2html.
 * 1.0 (2011-06-24): Initial release.
@@ -32,4 +36,4 @@ This project is [hosted on GitHub](https://github.com/bdesham/py-pinboard2html).
 
 ## License
 
-Copyright © 2011–2012 Benjamin D. Esham. This program is released under the ISC license, which you can find in the file LICENSE.md.
+Copyright © 2011–2012, 2024 Benjamin D. Esham. This program is released under the ISC license, which you can find in the file LICENSE.md.
